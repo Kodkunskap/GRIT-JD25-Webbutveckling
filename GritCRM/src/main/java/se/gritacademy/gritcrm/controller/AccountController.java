@@ -20,16 +20,22 @@ public class AccountController extends HttpServlet {
         AccountDAO accountDAO = new AccountDAO();
 
         if(req.getParameter("editId") != null) {
-            String sId = req.getParameter("editId");
-            Account account = new Account();
-            if(sId != null && !sId.isEmpty()) {
-                Integer id = Integer.parseInt(sId);
-                account = accountDAO.findById(id);
-            }
-
-            req.setAttribute("account", account);
-            req.getRequestDispatcher("/view/account/edit.jsp").forward(req, resp);
+            loadAccountAndRedirect(req, resp, "editId", "/view/account/edit.jsp");
             return;
+        }
+
+        if(req.getParameter("id") != null) {
+            loadAccountAndRedirect(req, resp, "id", "/view/account/view.jsp");
+            return;
+        }
+
+        if(req.getParameter("deleteId") != null) {
+            String sId = req.getParameter("deleteId");
+            if(sId != null && !sId.isEmpty()) {
+                Integer id  = Integer.parseInt(sId);
+                Account account = accountDAO.findById(id);
+                accountDAO.delete(account);
+            }
         }
 
         List<Account> accounts = accountDAO.findAll();
@@ -70,4 +76,20 @@ public class AccountController extends HttpServlet {
         req.setAttribute("accounts", accounts);
         req.getRequestDispatcher("/view/account/list.jsp").forward(req, resp);
     }
+
+    private void loadAccountAndRedirect(HttpServletRequest req, HttpServletResponse resp, String parameterName, String viewURI)
+            throws IOException, ServletException {
+        AccountDAO accountDAO = new AccountDAO();
+
+        String sId = req.getParameter(parameterName);
+        Account account = new Account();
+        if(sId != null && !sId.isEmpty()) {
+            Integer id = Integer.parseInt(sId);
+            account = accountDAO.findById(id);
+        }
+
+        req.setAttribute("account", account);
+        req.getRequestDispatcher(viewURI).forward(req, resp);
+    }
+
 }
