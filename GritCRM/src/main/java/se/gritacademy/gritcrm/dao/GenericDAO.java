@@ -3,6 +3,7 @@ package se.gritacademy.gritcrm.dao;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import se.gritacademy.gritcrm.util.HibernateUtil;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,12 +17,12 @@ public abstract class GenericDAO<T, ID extends Serializable> {
     }
 
     public T findById(ID id) {
-        Session session = util.HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         return session.find(persistentClass, id);
     }
 
     public List<T> findAll() {
-        Session session = util.HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Query<T> query = session.createQuery("from " + persistentClass.getSimpleName());
         return query.getResultList();
     }
@@ -29,7 +30,7 @@ public abstract class GenericDAO<T, ID extends Serializable> {
     public void save(T entity) {
         Transaction tx = null;
         try {
-            Session session = util.HibernateUtil.getSessionFactory().openSession();
+            Session session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
             session.persist(entity);
             tx.commit();
@@ -42,7 +43,7 @@ public abstract class GenericDAO<T, ID extends Serializable> {
     public void update(T entity) {
         Transaction tx = null;
         try {
-            Session session = util.HibernateUtil.getSessionFactory().openSession();
+            Session session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
             session.merge(entity);
             tx.commit();
@@ -55,7 +56,7 @@ public abstract class GenericDAO<T, ID extends Serializable> {
     public void delete(T entity) {
         Transaction tx = null;
         try {
-            Session session = util.HibernateUtil.getSessionFactory().openSession();
+            Session session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
             session.remove(entity);
             tx.commit();
